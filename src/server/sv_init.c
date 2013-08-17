@@ -917,7 +917,12 @@ void SV_Init( void ) {
 	sv_allowAnonymous = Cvar_Get( "sv_allowAnonymous", "0", CVAR_SERVERINFO );
 
 	// systeminfo
+#ifdef PANDORA
+// allow easy cheating by aving sv_cheats R/W
+	Cvar_Get( "sv_cheats", "0", CVAR_SYSTEMINFO );
+#else
 	Cvar_Get( "sv_cheats", "0", CVAR_SYSTEMINFO | CVAR_ROM );
+#endif
 	sv_serverid = Cvar_Get( "sv_serverid", "0", CVAR_SYSTEMINFO | CVAR_ROM );
 //----(SA) VERY VERY TEMPORARY!!!!!!!!!!!
 //----(SA) this is so Activision can test milestones with
