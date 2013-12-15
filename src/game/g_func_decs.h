@@ -1545,4 +1545,6 @@ extern void AIChar_Pain ( gentity_t * ent , gentity_t * attacker , int damage , 
 extern int AIChar_GetPainLocation ( gentity_t * ent , vec3_t point ) ;
 extern void AIChar_Death ( gentity_t * ent , gentity_t * attacker , int damage , int mod ) ;
 extern void AIChar_SetBBox ( gentity_t * ent , cast_state_t * cs , qboolean useHeadTag ) ;
+#ifdef AUTOAIM
 extern int SysMilliseconds( );
+#endif

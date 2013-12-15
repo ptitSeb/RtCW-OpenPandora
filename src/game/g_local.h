@@ -1079,6 +1079,11 @@ extern level_locals_t level;
 extern gentity_t g_entities[MAX_GENTITIES];
 extern gentity_t       *g_camEnt;
 
+#ifdef AUTOAIM
+extern gentity_t *g_autoAimEntity; //Added by Emile Belanger, trying to do proper autoaim
+extern unsigned int g_autoAimLastHitTime;
+#endif
+
 #define FOFS( x ) ( (int)&( ( (gentity_t *)0 )->x ) )
 
 extern vmCvar_t g_gametype;
