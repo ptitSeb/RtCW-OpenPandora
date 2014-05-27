@@ -298,7 +298,7 @@ static char *XLateKey( XKeyEvent *ev, int *key ) {
 
 #ifdef PANDORA
 	case XK_Shift_L:  *key = K_SHIFT; break;
-	case XK_Shift_R:  *key = (noshouldermb)?A_SHIFT:A_MOUSE2; break;
+	case XK_Shift_R:  *key = (noshouldermb)?K_SHIFT:K_MOUSE2; break;
 #else
 	case XK_Shift_L:
 	case XK_Shift_R:  *key = K_SHIFT;   break;
@@ -307,7 +307,7 @@ static char *XLateKey( XKeyEvent *ev, int *key ) {
 	case XK_Execute:
 #ifdef PANDORA
 	case XK_Control_L:  *key = K_CTRL;  break;
-	case XK_Control_R:  *key = (noshouldermb)?A_CTRL:A_MOUSE1;  break;
+	case XK_Control_R:  *key = (noshouldermb)?K_CTRL:K_MOUSE1;  break;
 #else
 	case XK_Control_L:
 	case XK_Control_R:  *key = K_CTRL;  break;
