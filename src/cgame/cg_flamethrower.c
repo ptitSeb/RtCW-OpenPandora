@@ -36,6 +36,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "cg_local.h"
 
+#pragma GCC optimize 2
+
 // a flameChunk is a ball or section of fuel which goes from fuel->blue ignition->flame ball
 // optimization is necessary, since lots of these will be spawned, but as they grow, they can be
 // merged so that less overdraw occurs
