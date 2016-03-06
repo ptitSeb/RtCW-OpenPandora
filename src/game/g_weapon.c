@@ -931,7 +931,7 @@ void Bullet_Fire( gentity_t *ent, float spread, int damage ) {
 	      VectorCopy( g_autoAimEntity->r.currentOrigin, end );
 	
 	      //Draw box arond current target
-	      if (g_autoAimEntity)
+	      /*if (g_autoAimEntity)
 	      {
 	        gentity_t *bboxEnt;
 	        vec3_t b1, b2;
@@ -942,7 +942,7 @@ void Bullet_Fire( gentity_t *ent, float spread, int damage ) {
 	        bboxEnt = G_TempEntity( b1, EV_RAILTRAIL );
 	        VectorCopy( b2, bboxEnt->s.origin2 );
 	        bboxEnt->s.dmgFlags = 1;    // ("type")
-	      }
+	      }*/
 	    }
 	    //reset this, will get set again if sucessful shot
 	    g_autoAimEntity = NULL;
