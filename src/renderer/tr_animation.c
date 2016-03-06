@@ -29,6 +29,9 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 
+#ifdef __ARM_NEON__
+#include <arm_neon.h>
+#endif
 /*
 
 All bones should be an identity orientation to display the mesh exactly
@@ -1255,16 +1258,16 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 		#ifdef HAVE_GLES
 		int ii;
 		for (ii=0; ii<indexes; ii++)
-			pIndexes[ii]=triangles[ii];
+			pIndexes[ii]=triangles[ii] + baseVertex;
 		#else
 		memcpy( pIndexes, triangles, sizeof( triangles[0] ) * indexes );
-		#endif
 		if ( baseVertex ) {
 			glIndex_t *indexesEnd;
 			for ( indexesEnd = pIndexes + indexes ; pIndexes < indexesEnd ; pIndexes++ ) {
 				*pIndexes += baseVertex;
 			}
 		}
+		#endif
 		tess.numIndexes += indexes;
 	} else
 	{
@@ -1317,21 +1320,41 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 	for ( j = 0; j < render_count; j++, tempVert += 4, tempNormal += 4 ) {
 		mdsWeight_t *w;
 
+#ifdef __ARM_NEON__
+		float32x4_t _tempVert = vdupq_n_f32(0.0f);
+#else
 		VectorClear( tempVert );
+#endif
 
 		w = v->weights;
 		for ( k = 0 ; k < v->numWeights ; k++, w++ ) {
 			bone = &bones[w->boneIndex];
+#ifdef __ARM_NEON__
+			const float32x4x3_t _mat = vld3q_f32((float*)bone->matrix);
+			_tempVert += 	  (   w->offset[0] * _mat.val[0] 
+								+ w->offset[1] * _mat.val[1]
+								+ w->offset[2] * _mat.val[2]
+								+ vld1q_f32(bone->translation) ) *  w->boneWeight;
+#else
 			LocalAddScaledMatrixTransformVectorTranslate( w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert );
+#endif
 		}
+#ifdef __ARM_NEON__
+		vst1q_f32(tempVert, _tempVert);
+		const float32x4x3_t _mat = vld3q_f32((float*)bones[v->weights[0].boneIndex].matrix);
+		vst1q_f32(tempNormal,	  vdupq_n_f32(v->normal[0])*_mat.val[0]
+								+ vdupq_n_f32(v->normal[1])*_mat.val[1]
+								+ vdupq_n_f32(v->normal[2])*_mat.val[2] );
+#else
 		LocalMatrixTransformVector( v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal );
-
+#endif
 		tess.texCoords[baseVertex + j][0][0] = v->texCoords[0];
 		tess.texCoords[baseVertex + j][0][1] = v->texCoords[1];
 
 		v = (mdsVertex_t *)&v->weights[v->numWeights];
 	}
-
+#ifndef HAVE_GLES
+	// remove debug code for GLES. It works, but it's useless
 	DBG_SHOWTIME
 
 	if ( r_bonesDebug->integer ) {
@@ -1428,7 +1451,7 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 		tess.numVertexes = baseVertex;
 		return;
 	}
-
+#endif
 #ifdef DBG_PROFILE_BONES
 	Com_Printf( "\n" );
 #endif
