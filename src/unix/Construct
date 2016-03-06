@@ -14,7 +14,7 @@
 # parse command line arguments and do the setup
 
 # defaults
-$config = 'debug';
+$config = 'release';
 $do_setup = 0;
 $do_demo = 0;
 $do_info = 0;
@@ -22,9 +22,11 @@ $do_info = 0;
 # compiler
 #$CC='gcc -m32';
 #$CXX='g++ -m32';
-$CC='gcc -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char';
-$CXX='g++ -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char';
+$CC='gcc -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char -fuse-ld=gold -fuse-linker-plugin';
+$CXX='g++ -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char -fuse-ld=gold -fuse-linker-plugin';
 $LINK=$CXX;
+$RANLIB='gcc-ranlib';
+$AR='gcc-ar';
 
 # detection of CPU type
 $cpu = `uname -m`;
@@ -125,7 +127,7 @@ if ($config eq 'debug')
 }
 else
 {
-  $BASE_CFLAGS = $COMMON_CFLAGS . '-DNDEBUG -Ofast -fomit-frame-pointer -ffast-math -fno-strict-aliasing -fstrength-reduce -ftree-vectorize -fsingle-precision-constant ';
+  $BASE_CFLAGS = $COMMON_CFLAGS . '-DNDEBUG -Ofast -fomit-frame-pointer -ffast-math -fno-strict-aliasing -fstrength-reduce -ftree-vectorize -fsingle-precision-constant -flto -flto-odr-type-merging ';
 }
 
 # extract the wolf version from q_shared.h

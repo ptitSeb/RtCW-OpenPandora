@@ -252,14 +252,15 @@ $SERVER_REF = \@SERVER_FILES;
 # anyway, qvm support is not planned in Wolf .. could get rid of it
 @VM_FILES = qw(
   ../qcommon/vm.c
+  ../qcommon/vm_armv7l.c
   ../qcommon/vm_interpreted.c
-  ../qcommon/vm_none.c
   );
 $VM_REF = \@VM_FILES;
 
 #  ../qcommon/vm.c
 #  ../qcommon/vm_interpreted.c
 #  ../qcommon/vm_x86.c
+#  ../qcommon/vm_none.c
 
 # FIXME: import the CPU string to build the name of the target
 Program $env 'wolfsp.arm', '../game/q_shared.c', '../game/q_math.c',

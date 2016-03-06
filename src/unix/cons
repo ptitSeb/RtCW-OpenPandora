@@ -284,10 +284,10 @@ sub showcom {
 		'LINKMODULECOM'  => '%LD -r -o %> %<',
 		'LIBDIRPREFIX'   => '-L',
 		'LIBDIRSUFFIX'   => '',
-		'AR'             => 'ar',
+		'AR'             => 'gcc-ar',
 		'ARFLAGS'        => 'r', # rs?
 		'ARCOM'          => ['%AR %ARFLAGS %> %<', '%RANLIB %>'],
-		'RANLIB'         => 'ranlib',
+		'RANLIB'         => 'gcc-ranlib',
 		'AS'             => 'as',
 		'ASFLAGS'        => '',
 		'ASCOM'          => '%AS %ASFLAGS %< -o %>',

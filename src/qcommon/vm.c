@@ -591,6 +591,10 @@ void VM_Free( vm_t *vm ) {
 		Sys_UnloadDll( vm->dllHandle );
 		Com_Memset( vm, 0, sizeof( *vm ) );
 	}
+
+	if(vm->destroy)
+		vm->destroy(vm);
+
 #if 0   // now automatically freed by hunk
 	if ( vm->codeBase ) {
 		Z_Free( vm->codeBase );
@@ -687,7 +691,7 @@ int QDECL VM_Call( vm_t *vm, int callnum, ... ) {
 	//rcg010207 see dissertation at top of VM_DllSyscall() in this file.
 #if ( ( defined __linux__ ) && ( defined __powerpc__ ) )
 	int i;
-	int args[16];
+	int args[MAX_VMMAIN_ARGS-1];
 	va_list ap;
 #endif
 
@@ -715,8 +719,7 @@ int QDECL VM_Call( vm_t *vm, int callnum, ... ) {
 
 		r = vm->entryPoint( callnum,  args[0],  args[1],  args[2], args[3],
 							args[4],  args[5],  args[6], args[7],
-							args[8],  args[9], args[10], args[11],
-							args[12], args[13], args[14], args[15] );
+							args[8],  args[9], args[10], args[11] );
 #else // PPC above, original id code below
 		r = vm->entryPoint( ( &callnum )[0], ( &callnum )[1], ( &callnum )[2], ( &callnum )[3],
 							( &callnum )[4], ( &callnum )[5], ( &callnum )[6], ( &callnum )[7],
@@ -828,6 +831,28 @@ void VM_VmInfo_f( void ) {
 		Com_Printf( "    table length: %7i\n", vm->instructionPointersLength );
 		Com_Printf( "    data length : %7i\n", vm->dataMask + 1 );
 	}
+}
+
+/*
+=================
+VM_BlockCopy
+Executes a block copy operation within currentVM data space
+=================
+*/
+
+void VM_BlockCopy(unsigned int dest, unsigned int src, size_t n)
+{
+	unsigned int dataMask = currentVM->dataMask;
+
+	if ((dest & dataMask) != dest
+	|| (src & dataMask) != src
+	|| ((dest + n) & dataMask) != dest + n
+	|| ((src + n) & dataMask) != src + n)
+	{
+		Com_Error(ERR_DROP, "OP_BLOCK_COPY out of range!");
+	}
+
+	Com_Memcpy(currentVM->dataBase + dest, currentVM->dataBase + src, n);
 }
 
 /*
