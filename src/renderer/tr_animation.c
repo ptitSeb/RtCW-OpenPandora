@@ -29,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 
-#ifdef __ARM_NEON__
+#ifdef NEON
 #include <arm_neon.h>
 #endif
 /*
@@ -1320,7 +1320,7 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 	for ( j = 0; j < render_count; j++, tempVert += 4, tempNormal += 4 ) {
 		mdsWeight_t *w;
 
-#ifdef __ARM_NEON__
+#ifdef NEON
 		float32x4_t _tempVert = vdupq_n_f32(0.0f);
 #else
 		VectorClear( tempVert );
@@ -1329,7 +1329,7 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 		w = v->weights;
 		for ( k = 0 ; k < v->numWeights ; k++, w++ ) {
 			bone = &bones[w->boneIndex];
-#ifdef __ARM_NEON__
+#ifdef NEON
 			const float32x4x3_t _mat = vld3q_f32((float*)bone->matrix);
 			_tempVert += 	  (   w->offset[0] * _mat.val[0] 
 								+ w->offset[1] * _mat.val[1]
@@ -1339,7 +1339,7 @@ void RB_SurfaceAnim( mdsSurface_t *surface ) {
 			LocalAddScaledMatrixTransformVectorTranslate( w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert );
 #endif
 		}
-#ifdef __ARM_NEON__
+#ifdef NEON
 		vst1q_f32(tempVert, _tempVert);
 		const float32x4x3_t _mat = vld3q_f32((float*)bones[v->weights[0].boneIndex].matrix);
 		vst1q_f32(tempNormal,	  vdupq_n_f32(v->normal[0])*_mat.val[0]
